@@ -2,6 +2,7 @@ from collections import defaultdict
 import warnings
 from fuzzywuzzy import process
 import speech_recognition as sr
+import logging
 
 
 class Commander(object):
@@ -17,12 +18,12 @@ class Commander(object):
             recognizer_func = self.recognizer.recognize_google
         try:
             value = recognizer_func(*args, **kwargs)
-        except sr.UnknownValueError:
-            return None
+            logging.debug('Recognized text: "{}"'.format(value))
+        except sr.UnknownValueError as e:
+            logging.debug('Issue recognizing audio; {}'.format(e))
         except sr.RequestError as e:
             msg = "Couldn't request results from Google Speech Recognition service; {0}".format(e)
-            warnings.warn(msg)
-        return recognizer_func(*args, **kwargs)
+            logging.debug(msg)
 
     def listen(self, *args, **kwargs):
         with sr.Microphone() as source:
@@ -32,6 +33,7 @@ class Commander(object):
     def match_command(self, text):
         best_match, match_ratio = process.extractOne(text, self.commands.keys())
         if match_ratio > self.match_threshold:
+            logging.debug('Matched command "{}" based on heard text "{}" with ratio of "{}"'.format(best_match, text, match_ratio))
             action_list = self.commands[best_match]
             return action_list
         return []
