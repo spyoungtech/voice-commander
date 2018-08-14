@@ -1,9 +1,7 @@
 from collections import defaultdict
-import warnings
 from fuzzywuzzy import process
 import speech_recognition as sr
 import logging
-
 
 class Commander(object):
     def __init__(self):
@@ -18,12 +16,13 @@ class Commander(object):
             recognizer_func = self.recognizer.recognize_google
         try:
             value = recognizer_func(*args, **kwargs)
-            logging.debug('Recognized text: "{}"'.format(value))
+            logging.info('Recognized text: "{}"'.format(value))
+            return value
         except sr.UnknownValueError as e:
             logging.debug('Issue recognizing audio; {}'.format(e))
         except sr.RequestError as e:
             msg = "Couldn't request results from Google Speech Recognition service; {0}".format(e)
-            logging.debug(msg)
+            logging.warning(msg)
 
     def listen(self, *args, **kwargs):
         with sr.Microphone() as source:
@@ -41,3 +40,9 @@ class Commander(object):
     def add_action(self, hook_text, func):
         assert callable(func)
         self.commands[hook_text].append(func)
+
+    def save_commands(self, fp):
+        raise NotImplementedError
+
+    def load_commands(self, fp):
+        raise NotImplementedError
