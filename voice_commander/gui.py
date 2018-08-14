@@ -90,7 +90,11 @@ class App(Commander):
         super().load_commands(fp)
 
     def edit_commands(self):
-        command_to_edit = eg.choicebox(msg="Choose a command trigger to edit", choices=list(self.commands.keys()))
+        choices = list(self.commands.keys())
+        if not choices:
+            return eg.msgbox('No commands to edit! Add some commands first.')
+        command_to_edit = eg.choicebox(msg="Choose a command trigger to edit", choices=choices)
+        self.edit_command(command_to_edit)
 
     def edit_command(self, command_trigger):
         actions = self.commands[command_trigger]
