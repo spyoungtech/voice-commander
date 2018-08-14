@@ -17,13 +17,13 @@ This project is currently a work-in-progress and is minimally functional.
 
 ## Installation
 
-For now, you can install via pip+git. For example
+You can install via `pip`
 
 ```
-pip install git+https://github.com/spyoungtech/voice-commander.git
+pip install voice-commander
 ```
 
-In the future, we'll be releasing on PyPI as well as executables for Windows, Mac OS, and Linux.
+Additionally, check the github releases for binary executables. Right now, that's just Windowze. In the future, we will also provide executables for multiple platforms.
 
 
 ## Running the gui app
@@ -51,4 +51,5 @@ By default, uses a Google API for speech-to-text conversion. Can support any oth
 - [ ] more predefined actions; e.g. start a program, mouse control, etc.
 - [ ] other action callbacks -- e.g. play a audio file in response to voice command
 - [ ] command editor
+- [ ] binaries for additional platforms (Mac OS/Linux)
 - [ ] ???
