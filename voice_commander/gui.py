@@ -6,6 +6,7 @@ from voice_commander import Commander
 from voice_commander.actions import Action
 import logging
 import speech_recognition as sr
+from collections import deque
 
 class App(Commander):
     """
@@ -16,6 +17,7 @@ class App(Commander):
         self._running_lock = Lock()
         self._running = False
         self._mic_lock = Lock()
+        self.message_queue = deque()
         super().__init__()
 
     def add_command(self):
@@ -29,12 +31,17 @@ class App(Commander):
         self.add_action(command_text, action)
 
     def _poll(self):
-        self.run_box.msg = 'running {}'.format(time.time())
-        self.run_box.ui.boxRoot.after(1000, self._poll)
+        while self.message_queue:
+            msg = "\n{}".format(self.message_queue.pop())
+            new_text = self.run_box.msg + msg
+            self.run_box.ui.set_msg(new_text)
+            self.run_box.msg = new_text
+        self.run_box.ui.boxRoot.after(200, self._poll)
 
     def run(self):
         self._running = True
         self.run_box = eg.buttonbox(msg='starting...', choices=['stop'], run=False)
+        self.run_box.msg = 'running...'
         self.run_box.ui.boxRoot.after(100, self._poll)
         threads = []
 
@@ -56,7 +63,6 @@ class App(Commander):
             cleanup_box.msg = 'Done!'
             cleanup_box.run()
 
-
     def do_listen(self):
         logging.debug('LISTENER STARTED')
         while True:
@@ -67,6 +73,8 @@ class App(Commander):
                     audio = self.listen(timeout=5)
                 logging.debug('Starting analysis')
                 value = self.analyze(audio)
+                if value is None:
+                    continue
                 logging.debug('Attempting to match audio to command')
                 actions = self.match_command(value)
                 for action in actions:
@@ -75,11 +83,27 @@ class App(Commander):
             except sr.WaitTimeoutError as e:
                 logging.debug('Timed out waiting for audio')
             except Exception as e:
-                logging.debug('Something happened; {}'.format(e))
+                logging.error(e, exc_info=True)
             if not self._running:
                 break
         logging.debug('LISTENER STOPPED')
 
+    def analyze(self, *args, **kwargs):
+        value = super().analyze(*args, **kwargs)
+        if value:
+            msg = "Heard audio: {}".format(value)
+            self.message_queue.appendleft(msg)
+        return value
+
+    def _match_command(self, text):
+        result = super()._match_command(text)
+        if result:
+            best_match, match_ratio = result
+            if match_ratio > self.match_threshold:
+                self.message_queue.appendleft('Recognized command "{}" with a ratio of {}'.format(best_match, match_ratio))
+            else:
+                self.message_queue.appendleft('No command recognized from text "{}"'.format(text))
+        return result
 
     def save_commands(self):
         fp = eg.filesavebox('choose file to save commands to')

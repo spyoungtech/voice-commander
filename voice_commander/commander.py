@@ -3,6 +3,7 @@ from fuzzywuzzy import process
 import speech_recognition as sr
 import logging
 
+
 class Commander(object):
     def __init__(self):
         self.commands = defaultdict(list)
@@ -29,12 +30,20 @@ class Commander(object):
             audio = self.recognizer.listen(source, *args, **kwargs)
         return audio
 
+    def _match_command(self, text):
+        return process.extractOne(text, self.commands.keys())
+
     def match_command(self, text):
-        best_match, match_ratio = process.extractOne(text, self.commands.keys())
+        result = self._match_command(text)
+        if result is None:
+            return []
+        best_match, match_ratio = result
         if match_ratio > self.match_threshold:
             logging.debug('Matched command "{}" based on heard text "{}" with ratio of "{}"'.format(best_match, text, match_ratio))
             action_list = self.commands[best_match]
             return action_list
+        else:
+            logging.debug('No command recognized from text "{}"'.format(text))
         return []
 
     def add_action(self, hook_text, func):
