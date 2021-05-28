@@ -45,11 +45,15 @@ By default, uses a Google API for speech-to-text conversion. Can support any oth
 
 ## TODO
 
-- [x] record keyboard actions to be executed on-command
-- [x] ability for users to define trigger phrases and match voice to commands
-- [ ] make actions able to be serialized/deserialized (ideally to json)
+- [x] ~~record keyboard actions to be executed on-command~~
+- [x] ~~ability for users to define trigger phrases and match voice to commands~~
+- [x] ~~make actions able to be serialized/deserialized~~ (ideally to json)
+- [ ] Ability to define keyboard macros without need to record input
+- [ ] Ability to provide macro playback speed (for the whole macro)
 - [ ] more predefined actions; e.g. start a program, mouse control, etc.
 - [ ] other action callbacks -- e.g. play a audio file in response to voice command
 - [ ] command editor
+  - [ ] Ability to edit trigger word
+  - [ ] Ability to edit playback speed per individual macro action
 - [ ] binaries for additional platforms (Mac OS/Linux)
 - [ ] ???
