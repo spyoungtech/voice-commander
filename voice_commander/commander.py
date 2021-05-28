@@ -2,6 +2,7 @@ from collections import defaultdict
 from fuzzywuzzy import process
 import speech_recognition as sr
 import logging
+import pickle
 
 
 class Commander(object):
@@ -51,7 +52,9 @@ class Commander(object):
         self.commands[hook_text].append(func)
 
     def save_commands(self, fp):
-        raise NotImplementedError
+        with open(fp, 'wb') as f:
+            pickle.dump(self.commands, f)
 
     def load_commands(self, fp):
-        raise NotImplementedError
+        with open(fp, 'rb') as f:
+            self.commands = pickle.load(f)
