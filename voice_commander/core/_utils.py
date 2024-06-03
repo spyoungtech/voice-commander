@@ -9,7 +9,6 @@ from typing import Union
 from ahk import AHK
 from ahk.directives import NoTrayIcon
 
-from .voice_listener import Listener
 
 _global_ahk: Union[None, AHK[Any]] = None
 _global_listener: Union[None, Listener] = None
@@ -116,3 +115,6 @@ def get_joystick_axis_or_pov() -> tuple[str, str, int | float]:
                 if abs(current_value - initial_value) > 30 or (axis == 'POV' and current_value != initial_value):
                     return joystick, axis, current_value
         time.sleep(0.1)
+
+
+from .voice_listener import Listener  # noqa

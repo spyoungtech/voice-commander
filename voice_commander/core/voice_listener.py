@@ -13,6 +13,10 @@ import speech_recognition as sr  # type: ignore[import-untyped]
 from speech_recognition import AudioData
 from thefuzz import process  # type: ignore[import-untyped]
 
+from voice_commander.core._utils import get_logger
+
+logger = get_logger()
+
 
 class Listener:
     def __init__(self) -> None:
@@ -64,11 +68,16 @@ class Listener:
             self._listener_threads.append(t)
 
     def stop(self) -> None:
-        self._running = False
-        self._listening = False
-        while self._listener_threads:
-            t = self._listener_threads.pop()
-            t.join()
+        if self._running or self._listening:
+            logger.info('Stopping voice listener (this may take a few seconds)...')
+            self._running = False
+            self._listening = False
+            while self._listener_threads:
+                t = self._listener_threads.pop()
+                t.join()
+            logger.info('Voice listener stopped')
+        else:
+            logger.debug('Stop called on already-stopped listener')
 
     def start_listening(self) -> None:
         self._listening = True
@@ -105,6 +114,8 @@ class Listener:
                 break
             try:
                 with self._mic_lock:
+                    if not self._running or not self._listening:
+                        break
                     with sr.Microphone() as source:
                         audio = self._recognizer.listen(source, timeout=self._listen_timeout)
                 logging.debug('Starting analysis')

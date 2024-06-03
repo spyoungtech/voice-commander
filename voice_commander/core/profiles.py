@@ -8,7 +8,12 @@ from typing import Self
 
 import json5
 
+from ._utils import get_listener
+from ._utils import get_logger
 from .triggers import TriggerBase
+
+
+logger = get_logger()
 
 
 def load_profile(filepath: str | pathlib.Path) -> 'Profile':
@@ -43,8 +48,11 @@ class Profile:
         return self
 
     def deactivate(self) -> None:
+        logger.info('Deactivating profile')
         for trigger in self.triggers:
             trigger.uninstall_hook()
+        listener = get_listener()
+        listener.stop()
 
     def dump_json(self, file_handle: typing.TextIO, indent: int = 4) -> None:
         json.dump(self.to_dict(), file_handle, indent=indent)
