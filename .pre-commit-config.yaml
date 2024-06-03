@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: generate-schema
         name: generate-schema
-        entry: python -m voice_commander.core.schema
+        entry: python -m voice_commander.schema
         language: python
         types: [python]
         pass_filenames: false

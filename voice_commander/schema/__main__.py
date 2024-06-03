@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def main() -> None:
-    from voice_commander.core.schema import ProfileSchema
+    from voice_commander.schema import ProfileSchema
 
     this_script = Path(__file__)
     schema_file = this_script.parent / 'schema.json'

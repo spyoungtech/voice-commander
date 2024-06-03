@@ -3,15 +3,15 @@
         "AHKMakeWindowActiveActionSchema": {
             "properties": {
                 "action_type": {
-                    "const": "voice_commander.core.actions.AHKMakeWindowActiveAction",
+                    "const": "voice_commander.actions.AHKMakeWindowActiveAction",
                     "enum": [
-                        "voice_commander.core.actions.AHKMakeWindowActiveAction"
+                        "voice_commander.actions.AHKMakeWindowActiveAction"
                     ],
                     "title": "Action Type",
                     "type": "string"
                 },
                 "action_config": {
-                    "$ref": "#/$defs/voice_commander__core__actions__AHKMakeWindowActiveAction__ConfigDict"
+                    "$ref": "#/$defs/voice_commander__actions__AHKMakeWindowActiveAction__ConfigDict"
                 }
             },
             "required": [
@@ -24,15 +24,15 @@
         "AHKPressActionSchema": {
             "properties": {
                 "action_type": {
-                    "const": "voice_commander.core.actions.AHKPressAction",
+                    "const": "voice_commander.actions.AHKPressAction",
                     "enum": [
-                        "voice_commander.core.actions.AHKPressAction"
+                        "voice_commander.actions.AHKPressAction"
                     ],
                     "title": "Action Type",
                     "type": "string"
                 },
                 "action_config": {
-                    "$ref": "#/$defs/voice_commander__core__actions__AHKPressAction__ConfigDict"
+                    "$ref": "#/$defs/voice_commander__actions__AHKPressAction__ConfigDict"
                 }
             },
             "required": [
@@ -45,15 +45,15 @@
         "AHKSendActionSchema": {
             "properties": {
                 "action_type": {
-                    "const": "voice_commander.core.actions.AHKSendAction",
+                    "const": "voice_commander.actions.AHKSendAction",
                     "enum": [
-                        "voice_commander.core.actions.AHKSendAction"
+                        "voice_commander.actions.AHKSendAction"
                     ],
                     "title": "Action Type",
                     "type": "string"
                 },
                 "action_config": {
-                    "$ref": "#/$defs/voice_commander__core__actions__AHKSendAction__ConfigDict"
+                    "$ref": "#/$defs/voice_commander__actions__AHKSendAction__ConfigDict"
                 }
             },
             "required": [
@@ -150,7 +150,7 @@
             "title": "TriggerSchema",
             "type": "object"
         },
-        "voice_commander__core__actions__AHKMakeWindowActiveAction__ConfigDict": {
+        "voice_commander__actions__AHKMakeWindowActiveAction__ConfigDict": {
             "properties": {
                 "title": {
                     "title": "Title",
@@ -250,7 +250,7 @@
             "title": "ConfigDict",
             "type": "object"
         },
-        "voice_commander__core__actions__AHKPressAction__ConfigDict": {
+        "voice_commander__actions__AHKPressAction__ConfigDict": {
             "properties": {
                 "key": {
                     "title": "Key",
@@ -263,7 +263,7 @@
             "title": "ConfigDict",
             "type": "object"
         },
-        "voice_commander__core__actions__AHKSendAction__ConfigDict": {
+        "voice_commander__actions__AHKSendAction__ConfigDict": {
             "properties": {
                 "send_string": {
                     "title": "Send String",

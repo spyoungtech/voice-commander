@@ -6,40 +6,40 @@ from typing import Literal
 from pydantic import BaseModel
 from pydantic import field_validator
 
-from voice_commander.core.actions import _action_registry
-from voice_commander.core.actions import ActionBase
-from voice_commander.core.actions import AHKMakeWindowActiveAction
-from voice_commander.core.actions import AHKPressAction
-from voice_commander.core.actions import AHKSendAction
-from voice_commander.core.actions import PauseAction
-from voice_commander.core.actions import restore_action
-from voice_commander.core.profiles import Profile
-from voice_commander.core.triggers import _trigger_registry
-from voice_commander.core.triggers import HotkeyTrigger
-from voice_commander.core.triggers import JoystickAxisTrigger
-from voice_commander.core.triggers import JoystickButtonTrigger
-from voice_commander.core.triggers import restore_trigger
-from voice_commander.core.triggers import TriggerBase
-from voice_commander.core.triggers import VoiceTrigger
+from voice_commander.actions import _action_registry
+from voice_commander.actions import ActionBase
+from voice_commander.actions import AHKMakeWindowActiveAction
+from voice_commander.actions import AHKPressAction
+from voice_commander.actions import AHKSendAction
+from voice_commander.actions import PauseAction
+from voice_commander.actions import restore_action
+from voice_commander.profiles import Profile
+from voice_commander.triggers import _trigger_registry
+from voice_commander.triggers import HotkeyTrigger
+from voice_commander.triggers import JoystickAxisTrigger
+from voice_commander.triggers import JoystickButtonTrigger
+from voice_commander.triggers import restore_trigger
+from voice_commander.triggers import TriggerBase
+from voice_commander.triggers import VoiceTrigger
 
 
 class AHKSendActionSchema(BaseModel):
-    action_type: Literal['voice_commander.core.actions.AHKSendAction']
+    action_type: Literal['voice_commander.actions.AHKSendAction']
     action_config: AHKSendAction.ConfigDict
 
 
 class AHKPressActionSchema(BaseModel):
-    action_type: Literal['voice_commander.core.actions.AHKPressAction']
+    action_type: Literal['voice_commander.actions.AHKPressAction']
     action_config: AHKPressAction.ConfigDict
 
 
 class AHKMakeWindowActiveActionSchema(BaseModel):
-    action_type: Literal['voice_commander.core.actions.AHKMakeWindowActiveAction']
+    action_type: Literal['voice_commander.actions.AHKMakeWindowActiveAction']
     action_config: AHKMakeWindowActiveAction.ConfigDict
 
 
 class PauseActionSchema(BaseModel):
-    action_type: Literal['voice_commander.core.actions.PauseAction']
+    action_type: Literal['voice_commander.actions.PauseAction']
     action_config: PauseAction.ConfigDict
 
 
@@ -59,7 +59,7 @@ class ActionSchema(BaseModel):
 
 
 class HotkeyTriggerSchema(BaseModel):
-    trigger_type: Literal['voice_commander.core.triggers.HotkeyTrigger']
+    trigger_type: Literal['voice_commander.triggers.HotkeyTrigger']
     trigger_config: HotkeyTrigger.ConfigDict
 
     def to_trigger(self) -> HotkeyTrigger:
@@ -67,7 +67,7 @@ class HotkeyTriggerSchema(BaseModel):
 
 
 class JoystickAxisTriggerSchema(BaseModel):
-    trigger_type: Literal['voice_commander.core.triggers.JoystickAxisTrigger']
+    trigger_type: Literal['voice_commander.triggers.JoystickAxisTrigger']
     trigger_config: JoystickAxisTrigger.ConfigDict
 
     def to_trigger(self) -> JoystickAxisTrigger:
@@ -75,7 +75,7 @@ class JoystickAxisTriggerSchema(BaseModel):
 
 
 class JoystickButtonTriggerSchema(BaseModel):
-    trigger_type: Literal['voice_commander.core.triggers.JoystickButtonTrigger']
+    trigger_type: Literal['voice_commander.triggers.JoystickButtonTrigger']
     trigger_config: JoystickButtonTrigger.ConfigDict
 
     def to_trigger(self) -> JoystickButtonTrigger:
@@ -83,7 +83,7 @@ class JoystickButtonTriggerSchema(BaseModel):
 
 
 class VoiceTriggerSchema(BaseModel):
-    trigger_type: Literal['voice_commander.core.triggers.VoiceTrigger']
+    trigger_type: Literal['voice_commander.triggers.VoiceTrigger']
     trigger_config: VoiceTrigger.ConfigDict
 
     def to_trigger(self) -> VoiceTrigger:
