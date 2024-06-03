@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import json
 import os
 import pathlib
+import time
 import typing
 from pathlib import Path
 from typing import Any
@@ -17,9 +20,11 @@ logger = get_logger()
 
 
 def load_profile(filepath: str | pathlib.Path) -> 'Profile':
+    from .schema import ProfileSchema
+
     with open(filepath) as f:
         data = json5.load(f)
-    return Profile.from_dict(data)
+    return ProfileSchema.parse_obj(data).to_profile()
 
 
 class Profile:
@@ -48,7 +53,7 @@ class Profile:
         return self
 
     def deactivate(self) -> None:
-        logger.info('Deactivating profile')
+        logger.info(f'Deactivating profile {self.name!r}')
         for trigger in self.triggers:
             trigger.uninstall_hook()
         listener = get_listener()
@@ -101,3 +106,15 @@ class Profile:
             triggers.append(t)
         name = data['profile_name']
         return cls(profile_name=name, triggers=triggers)
+
+    def __enter__(self) -> Self:
+        self.activate()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.deactivate()
+
+    def run(self) -> typing.NoReturn:
+        with self:
+            while True:
+                time.sleep(1)
