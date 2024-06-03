@@ -1,0 +1,7 @@
+pydantic
+SpeechRecognition
+thefuzz
+pyaudio
+setuptools
+ahk
+json-five

@@ -1,0 +1,290 @@
+{
+    "$defs": {
+        "AHKMakeWindowActiveActionSchema": {
+            "properties": {
+                "action_type": {
+                    "const": "voice_commander.core.actions.AHKMakeWindowActiveAction",
+                    "enum": [
+                        "voice_commander.core.actions.AHKMakeWindowActiveAction"
+                    ],
+                    "title": "Action Type",
+                    "type": "string"
+                },
+                "action_config": {
+                    "$ref": "#/$defs/voice_commander__core__actions__AHKMakeWindowActiveAction__ConfigDict"
+                }
+            },
+            "required": [
+                "action_type",
+                "action_config"
+            ],
+            "title": "AHKMakeWindowActiveActionSchema",
+            "type": "object"
+        },
+        "AHKPressActionSchema": {
+            "properties": {
+                "action_type": {
+                    "const": "voice_commander.core.actions.AHKPressAction",
+                    "enum": [
+                        "voice_commander.core.actions.AHKPressAction"
+                    ],
+                    "title": "Action Type",
+                    "type": "string"
+                },
+                "action_config": {
+                    "$ref": "#/$defs/voice_commander__core__actions__AHKPressAction__ConfigDict"
+                }
+            },
+            "required": [
+                "action_type",
+                "action_config"
+            ],
+            "title": "AHKPressActionSchema",
+            "type": "object"
+        },
+        "AHKSendActionSchema": {
+            "properties": {
+                "action_type": {
+                    "const": "voice_commander.core.actions.AHKSendAction",
+                    "enum": [
+                        "voice_commander.core.actions.AHKSendAction"
+                    ],
+                    "title": "Action Type",
+                    "type": "string"
+                },
+                "action_config": {
+                    "$ref": "#/$defs/voice_commander__core__actions__AHKSendAction__ConfigDict"
+                }
+            },
+            "required": [
+                "action_type",
+                "action_config"
+            ],
+            "title": "AHKSendActionSchema",
+            "type": "object"
+        },
+        "ActionSchema": {
+            "properties": {
+                "action_type": {
+                    "title": "Action Type",
+                    "type": "string"
+                },
+                "action_config": {
+                    "title": "Action Config",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "action_type",
+                "action_config"
+            ],
+            "title": "ActionSchema",
+            "type": "object"
+        },
+        "ProfileConfig": {
+            "properties": {
+                "schema_version": {
+                    "const": "0",
+                    "default": "0",
+                    "enum": [
+                        "0"
+                    ],
+                    "title": "Schema Version",
+                    "type": "string"
+                },
+                "profile_name": {
+                    "title": "Profile Name",
+                    "type": "string"
+                },
+                "triggers": {
+                    "items": {
+                        "$ref": "#/$defs/TriggerSchema"
+                    },
+                    "title": "Triggers",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "profile_name",
+                "triggers"
+            ],
+            "title": "ProfileConfig",
+            "type": "object"
+        },
+        "TriggerSchema": {
+            "properties": {
+                "trigger_type": {
+                    "title": "Trigger Type",
+                    "type": "string"
+                },
+                "actions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/AHKSendActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKPressActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                },
+                "trigger_config": {
+                    "title": "Trigger Config",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "trigger_type",
+                "actions",
+                "trigger_config"
+            ],
+            "title": "TriggerSchema",
+            "type": "object"
+        },
+        "voice_commander__core__actions__AHKMakeWindowActiveAction__ConfigDict": {
+            "properties": {
+                "title": {
+                    "title": "Title",
+                    "type": "string"
+                },
+                "text": {
+                    "title": "Text",
+                    "type": "string"
+                },
+                "exclude_title": {
+                    "title": "Exclude Title",
+                    "type": "string"
+                },
+                "exclude_text": {
+                    "title": "Exclude Text",
+                    "type": "string"
+                },
+                "title_match_mode": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                "RegEx",
+                                ""
+                            ]
+                        },
+                        {
+                            "enum": [
+                                "Fast",
+                                "Slow",
+                                ""
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        },
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Title Match Mode"
+                },
+                "detect_hidden_windows": {
+                    "title": "Detect Hidden Windows",
+                    "type": "boolean"
+                }
+            },
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__core__actions__AHKPressAction__ConfigDict": {
+            "properties": {
+                "key": {
+                    "title": "Key",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__core__actions__AHKSendAction__ConfigDict": {
+            "properties": {
+                "send_string": {
+                    "title": "Send String",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "send_string"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        }
+    },
+    "properties": {
+        "configuration": {
+            "$ref": "#/$defs/ProfileConfig"
+        }
+    },
+    "required": [
+        "configuration"
+    ],
+    "title": "ProfileSchema",
+    "type": "object"
+}
