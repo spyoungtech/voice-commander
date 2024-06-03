@@ -12,7 +12,6 @@ repos:
           - pydantic
           - SpeechRecognition
           - thefuzz
-          - pyaudio
           - setuptools
           - ahk
           - json-five
@@ -53,7 +52,6 @@ repos:
           - pydantic
           - SpeechRecognition
           - thefuzz
-          - pyaudio
           - setuptools
           - ahk
           - json-five
