@@ -60,10 +60,17 @@ class ActionBase:
 
 
 class AHKSendAction(ActionBase):
+    """
+    Send inputs using AutoHotkey
+    """
+
     class ConfigDict(TypedDict):
         send_string: str
 
     def __init__(self, send_string: str):
+        """
+        :param send_string: the keys to send - uses AutoHotkey's `Send <https://www.autohotkey.com/docs/v1/lib/Send.htm>`_ function
+        """
         self.send_string: str = send_string
 
     def perform(self) -> None:
@@ -75,10 +82,19 @@ class AHKSendAction(ActionBase):
 
 
 class AHKPressAction(ActionBase):
+    """
+    Press (and release) a single key.
+    Adds small delay between key down and key up, useful for making sure games register inputs.
+    """
+
     class ConfigDict(TypedDict):
         key: str
 
     def __init__(self, key: str):
+        """
+
+        :param key: the key to press. Do not include braces for special keys.
+        """
         self.key: str = key
 
     def perform(self) -> None:
@@ -93,10 +109,18 @@ class AHKPressAction(ActionBase):
 
 
 class WinSoundAction(ActionBase):
+    """
+    Play a sound (wav file)
+    """
+
     class ConfigDict(TypedDict):
         sound_file_path: str
 
     def __init__(self, sound_file_path: str):
+        """
+
+        :param sound_file_path: the path to the sound file. Must be .wav format.
+        """
         sound_file_path = os.path.abspath(sound_file_path)
         assert os.path.exists(sound_file_path), f'File {sound_file_path!r} does not exit'
         self.sound_file_path: str = sound_file_path
@@ -110,6 +134,10 @@ class WinSoundAction(ActionBase):
 
 
 class AHKMakeWindowActiveAction(ActionBase):
+    """
+    Make a window active, ensuring it has focus
+    """
+
     class ConfigDict(TypedDict):
         title: NotRequired[str]
         text: NotRequired[str]
@@ -119,6 +147,10 @@ class AHKMakeWindowActiveAction(ActionBase):
         detect_hidden_windows: NotRequired[bool]
 
     def __init__(self, **win_get_kwargs: Unpack[ConfigDict]):
+        """
+
+        :param win_get_kwargs:
+        """
         self._win_get_kwargs = win_get_kwargs
 
     def perform(self) -> None:
@@ -132,10 +164,18 @@ class AHKMakeWindowActiveAction(ActionBase):
 
 
 class PauseAction(ActionBase):
+    """
+    Sleeps for specified time
+    """
+
     class ConfigDict(TypedDict):
         seconds: int | float
 
     def __init__(self, seconds: float | int):
+        """
+
+        :param seconds: time in seconds to sleep
+        """
         self.seconds: float | int = seconds
 
     def perform(self) -> None:
