@@ -1,5 +1,7 @@
 # Not necessarily intended to be used by users.
 # Used to regenerate schema.json file and as local pre-commit hook
+from __future__ import annotations
+
 from pathlib import Path
 
 

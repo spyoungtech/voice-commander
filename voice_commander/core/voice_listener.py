@@ -4,9 +4,9 @@ import logging
 import queue
 import time
 import warnings
+from collections.abc import Sequence
 from threading import Lock
 from threading import Thread
-from typing import Sequence
 from typing import TYPE_CHECKING
 
 import speech_recognition as sr  # type: ignore[import-untyped]
