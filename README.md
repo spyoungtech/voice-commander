@@ -7,18 +7,25 @@ software [VoiceAttack](https://www.voiceattack.com/).
 
 This is a major rewrite of a pre-existing project. If you're looking for the older version of this software, see the [pre-rewrite tag](https://github.com/spyoungtech/voice-commander/releases/tag/pre-rewrite) (or the now-yanked `0.0.1a` version on PyPI).
 
-Installation, ideally in a virtualenv:
+## Installation
+
+### Via pip
+
+To install, ideally in a virtualenv, use `pip`:
 
 ```bash
 pip install voice-commander
 ```
 
-Also requires that you have AutoHotkey installed. You can either install AutoHotkey to a default location or, alternatively, install the `ahk-binary` package in your virtualenv:
+This software also requires that you have AutoHotkey installed. You can either install AutoHotkey to a default location or, alternatively, install the `ahk-binary` package in your virtualenv:
 
 ```bash
 pip install ahk-binary
 ```
 
+### Windows executable
+
+Coming soon.
 
 ## Status
 
