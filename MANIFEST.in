@@ -1,2 +1,3 @@
 include LICENSE
 include voice_commander/schema/schema.json
+include README.md
