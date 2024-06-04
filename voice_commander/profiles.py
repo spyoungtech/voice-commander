@@ -19,12 +19,29 @@ from .triggers import TriggerBase
 logger = get_logger()
 
 
+def _get_default_profile_path() -> str:
+    return os.path.expanduser('~/.voice_commander/profiles')
+
+
 def load_profile(filepath: str | pathlib.Path) -> 'Profile':
     from .schema import ProfileSchema
 
     with open(filepath) as f:
         data = json5.load(f)
     return ProfileSchema.parse_obj(data).to_profile()
+
+
+def load_profile_from_name(profile_name: str) -> 'Profile':
+    """
+    Loads a profile by name from the default profiles directory ("~/.voice_commander/profiles")
+
+    :param profile_name: the name of the profile
+    """
+    filename = f'{profile_name}.vcp.json'
+    fp = os.path.join(_get_default_profile_path(), filename)
+    if not os.path.isfile(fp):
+        raise FileNotFoundError(f'Profile file {fp!r} does not exist')
+    return load_profile(fp)
 
 
 class Profile:
