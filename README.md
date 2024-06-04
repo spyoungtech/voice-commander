@@ -32,17 +32,87 @@ Coming soon.
 
 _Profiles_ defines a group of triggers respective associated actions that are to be activated at any given time.
 
-You can define profiles in Python code.
+You can define and run profiles in Python code.
 ```python
-from
+from voice_commander.profile import Profile
+from voice_commander.triggers import *
+from voice_commander.actions import *
+
+
+profile = Profile("myprofile")
+
+# triggers when any of these phrases are spoken
+# You can add as many phrases as you want
+trigger = VoiceTrigger('lower landing gear', 'retract landing gear')
+# When the above trigger activates from a voice command, presses the "l" button (bound in-game to landing gear toggle)
+action = AHKPressAction("l")
+trigger.add_action(action)  # you can add multiple actions if you want. Here, we're just adding one action.
+profile.add_trigger(trigger)
+
+profile.run()
 ```
+
+You can also serialize/deserialize profiles to/from JSON.
+
+```python
+# save the profile to the present working directory
+profile.save_json(dirname='.', filename='myprofile.vcp.json')  # "vcp" means "Voice Commander Profile"
+```
+
+```python
+from voice_commander.profile import load_profile
+# easily load profiles from JSON
+profile = load_profile('./myprofile.vcp.json')
+profile.run()
+```
+
+You may also edit JSON files directly. The above example produces the following JSON file:
+
+```json
+{
+    "configuration": {
+        "profile_name": "myprofile",
+        "schema_version": "0",
+        "triggers": [
+            {
+                "trigger_type": "voice_commander.triggers.VoiceTrigger",
+                "trigger_config": {
+                    "*trigger_phrases": [
+                        "lower landing gear",
+                        "retract landing gear"
+                    ]
+                },
+                "actions": [
+                    {
+                        "action_type": "voice_commander.actions.AHKPressAction",
+                        "action_config": {
+                            "key": "l"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+JSON5 is also supported. More formats may be supported in the future.
+
+You can also run profiles directly from the command line:
+
+```bash
+python -m voice_commander run_profile --filename="./myprofile.vcp.json"
+```
+
+
+
+Full documentation coming soon.
 
 ## Status
 
 This project is in early stages of development. While it is very much usable in its current state and some efforts will
 be made to avoid breaking changes, some breaking changes are likely to occur.
 
-Full documentation coming soon.
 
 ### Current Limitations
 
