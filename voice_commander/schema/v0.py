@@ -13,7 +13,7 @@ from voice_commander.actions import AHKPressAction
 from voice_commander.actions import AHKSendAction
 from voice_commander.actions import PauseAction
 from voice_commander.actions import restore_action
-from voice_commander.profiles import Profile
+from voice_commander.profile import Profile
 from voice_commander.triggers import _trigger_registry
 from voice_commander.triggers import HotkeyTrigger
 from voice_commander.triggers import JoystickAxisTrigger

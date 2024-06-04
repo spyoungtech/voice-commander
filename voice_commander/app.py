@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Self
 
 from ._utils import get_listener
-from .profiles import Profile
+from .profile import Profile
 
 
 class ApplicationState:

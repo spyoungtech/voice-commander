@@ -5,8 +5,8 @@ import logging
 import sys
 
 from voice_commander._utils import get_logger
-from voice_commander.profiles import load_profile
-from voice_commander.profiles import load_profile_from_name
+from voice_commander.profile import load_profile
+from voice_commander.profile import load_profile_from_name
 
 logger = get_logger()
 

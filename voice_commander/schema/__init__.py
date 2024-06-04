@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from ..profiles import Profile
+from ..profile import Profile
 from .v0 import ProfileConfig as ProfileConfigV0
 
 CURRENT_SCHEMA_VERSION = '0'
