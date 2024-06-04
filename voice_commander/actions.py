@@ -52,6 +52,7 @@ class ActionBase:
     def __init_subclass__(cls: Type[T_Action], **kwargs: Any) -> None:
         fqn = cls.fqn()
         assert fqn not in _action_registry, f'cannot register class {cls!r} with fqn {fqn!r} which is already in use'
+        assert hasattr(cls, 'ConfigDict')
         _action_registry[fqn] = cls
         super().__init_subclass__(**kwargs)
 
@@ -62,8 +63,15 @@ class ActionBase:
     @abc.abstractmethod
     def perform(self) -> None: ...
 
+    @abc.abstractmethod
+    def _get_config(self) -> Any: ...
+
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'conditions': [cond.to_dict() for cond in self.conditions]}
+        return {
+            'action_type': self.fqn(),
+            'action_config': self._get_config(),
+            'conditions': [cond.to_dict() for cond in self.conditions],
+        }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> Self:
@@ -115,8 +123,8 @@ class AHKSendAction(ActionBase):
         engine = get_ahk()
         engine.send(self.send_string)
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'action_config': {'send_string': self.send_string}}
+    def _get_config(self) -> ConfigDict:
+        return {'send_string': self.send_string}
 
 
 class AHKPressAction(ActionBase):
@@ -143,8 +151,8 @@ class AHKPressAction(ActionBase):
         engine.send(f'{{Blind}}{{{self.key} UP}}', blocking=False)
         time.sleep(0.1)
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'action_config': {'key': self.key}}
+    def _get_config(self) -> ConfigDict:
+        return {'key': self.key}
 
 
 class WinSoundAction(ActionBase):
@@ -179,8 +187,8 @@ class WinSoundAction(ActionBase):
             raise RuntimeError('winsound module is not available')
         winsound.PlaySound(self.sound_file_path, self._flags)
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'action_config': {'sound_file_path': self.sound_file_path}}
+    def _get_config(self) -> ConfigDict:
+        return {'sound_file_path': self.sound_file_path}
 
 
 class AHKMakeWindowActiveAction(ActionBase):
@@ -210,8 +218,8 @@ class AHKMakeWindowActiveAction(ActionBase):
         assert win is not None, f'Could not find window with parameters {self._win_get_kwargs!r}'
         win.activate()
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'action_config': self._win_get_kwargs}
+    def _get_config(self) -> ConfigDict:
+        return self._win_get_kwargs
 
 
 class PauseAction(ActionBase):
@@ -233,5 +241,5 @@ class PauseAction(ActionBase):
     def perform(self) -> None:
         time.sleep(self.seconds)
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'action_config': {'seconds': self.seconds}}
+    def _get_config(self) -> ConfigDict:
+        return {'seconds': self.seconds}

@@ -60,9 +60,13 @@ class TriggerBase:
         _trigger_registry[fqn] = cls
         super().__init_subclass__(**kwargs)
 
+    @abc.abstractmethod
+    def _get_config(self) -> Any: ...
+
     def to_dict(self) -> dict[str, Any]:
         return {
             'trigger_type': self.fqn(),
+            'trigger_config': self._get_config(),
             'actions': [action.to_dict() for action in self.actions],
             'conditions': [cond.to_dict() for cond in self.conditions],
         }
@@ -128,8 +132,8 @@ class HotkeyTrigger(TriggerBase):
         super().__init__()
         self.hotkey = hotkey
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'trigger_config': {'hotkey': self.hotkey}}
+    def _get_config(self) -> ConfigDict:
+        return {'hotkey': self.hotkey}
 
     def install_hook(self) -> None:
         ahk = get_ahk()
@@ -158,10 +162,8 @@ class JoystickButtonTrigger(HotkeyTrigger):
         self.joystick_button = joystick_button
         super().__init__(hotkey=f'{joystick_index}Joy{joystick_button}')
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {
-            'trigger_config': {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button}
-        }
+    def _get_config(self) -> ConfigDict:  # type: ignore[override]
+        return {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button}
 
 
 class AxisTriggerMode(enum.IntEnum):
@@ -187,23 +189,23 @@ class JoystickAxisTrigger(TriggerBase):
         polling_frequency: int = 30,
     ):
         super().__init__()
+        assert axis_name in ['X', 'Y', 'Z', 'V', 'U', 'R']
+        assert int(trigger_mode) in (1, 2, 3)
         self.joystick_index = joystick_index
-        self.axis_name = (axis_name,)
+        self.axis_name = axis_name
         self.trigger_mode = trigger_mode
-        self.trigger_value = (trigger_value,)
+        self.trigger_value = trigger_value
         self.polling_frequency = polling_frequency
 
     def _listen_joystick(self) -> None: ...
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {
-            'trigger_config': {
-                'joystick_index': self.joystick_index,
-                'axis_name': self.axis_name,
-                'trigger_mode': int(self.trigger_mode),
-                'trigger_value': self.trigger_value,
-                'polling_frequency': self.polling_frequency,
-            },
+    def _get_config(self) -> ConfigDict:
+        return {
+            'joystick_index': self.joystick_index,
+            'axis_name': self.axis_name,  # type: ignore[typeddict-item]
+            'trigger_mode': int(self.trigger_mode),  # type: ignore[typeddict-item]
+            'trigger_value': self.trigger_value,
+            'polling_frequency': self.polling_frequency,
         }
 
     @classmethod
@@ -259,8 +261,8 @@ class VoiceTrigger(TriggerBase):
             self._match_queue.task_done()
         return None
 
-    def to_dict(self) -> dict[str, Any]:
-        return super().to_dict() | {'trigger_config': {'*trigger_phrases': self.trigger_phrases}}
+    def _get_config(self) -> dict[str, Any]:
+        return {'*trigger_phrases': self.trigger_phrases}
 
     def install_hook(self) -> None:
         assert self._thread is None
