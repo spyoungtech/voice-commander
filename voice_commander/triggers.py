@@ -213,6 +213,10 @@ class JoystickAxisTrigger(TriggerBase):
 
 
 class VoiceTrigger(TriggerBase):
+    """
+    Trigger on spoken voice commands. You can add multiple trigger phrases at once.
+    """
+
     ConfigDict = TypedDict('ConfigDict', {'*trigger_phrases': list[str]})
 
     def __init__(self, *trigger_phrases: str):

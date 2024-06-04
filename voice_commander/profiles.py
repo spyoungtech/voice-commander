@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import sys
 import time
 import typing
 from pathlib import Path
@@ -131,7 +132,12 @@ class Profile:
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.deactivate()
 
-    def run(self) -> typing.NoReturn:
+    def run(self) -> None:
+        print(f'Running profile {self.name!r}. Press ctrl+c to stop', flush=True, file=sys.stderr)
         with self:
-            while True:
-                time.sleep(1)
+            try:
+                while True:
+                    time.sleep(0.5)
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt received. Stopping.', file=sys.stderr, flush=True)
+        return None
