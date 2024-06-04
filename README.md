@@ -101,9 +101,8 @@ JSON5 is also supported. More formats may be supported in the future.
 You can also run profiles directly from the command line:
 
 ```bash
-python -m voice_commander run_profile --filename="./myprofile.vcp.json"
+python -m voice_commander run_profile --profile-file ./myprofile.profile.json```
 ```
-
 
 
 Full documentation coming soon.
