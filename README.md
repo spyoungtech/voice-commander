@@ -30,14 +30,22 @@ Coming soon.
 
 ## Usage
 
-_Profiles_ defines a group of triggers respective associated actions that are to be activated at any given time.
+The basic primitives include **profiles**, **triggers**, **actions**, and **conditions**.
+
+- An **action** defines the underlying action is to be performed upon triggering, such as pressing a keyboard key, playing a sound, opening a program, etc.
+- A **trigger** is used to trigger an associated set of _actions_. For example, speaking a voice activation phrase, pressing a hotkey combination (like win+n), or similar. A trigger may trigger any number of _actions_.
+- A **condition** is used to conditionally control execution of a trigger or any specific action within a trigger. For example, you may only want an action to perform a key press to actually activate when a specific window (like a game) is open/focused. A trigger may be attached to a _trigger_ or an _action_.
+- A **profile** is a collection of triggers (and their associated actions/conditions) which can be activated/deactivated together for convenience.
+
+### Basic example
 
 You can define and run profiles in Python code.
+
+
 ```python
 from voice_commander.profile import Profile
 from voice_commander.triggers import *
 from voice_commander.actions import *
-
 
 profile = Profile("myprofile")
 
@@ -66,7 +74,7 @@ profile = load_profile('./myprofile.vcp.json')
 profile.run()
 ```
 
-You may also edit JSON files directly. The above example produces the following JSON file:
+You may also edit and run JSON files which represent the complete profile directly. The above example produces a JSON file substantially as follows:
 
 ```json
 {
@@ -98,10 +106,10 @@ You may also edit JSON files directly. The above example produces the following 
 
 JSON5 is also supported. More formats may be supported in the future.
 
-You can also run profiles directly from the command line:
+You can run profiles from these files directly from the command line:
 
 ```bash
-python -m voice_commander run_profile --profile-file ./myprofile.profile.json```
+python -m voice_commander run_profile --profile-file ./myprofile.vcp.json
 ```
 
 
@@ -109,8 +117,9 @@ Full documentation coming soon.
 
 ## Status
 
-This project is in early stages of development. While it is very much usable in its current state and some efforts will
-be made to avoid breaking changes, some breaking changes are likely to occur.
+This project is in early stages of development, but is ready for use. Efforts will be made to keep existing
+profile schemas compatible with (or convertable to) any future schema versions, though the Python API is likely to have
+some breaking changes, at least while we're getting off the ground.
 
 
 ### Current Limitations
