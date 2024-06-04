@@ -3,7 +3,7 @@ from __future__ import annotations
 import abc
 import os.path
 import time
-import winsound
+import warnings
 from typing import Any
 from typing import NotRequired
 from typing import Self
@@ -16,6 +16,13 @@ from ahk import TitleMatchMode
 
 from ._utils import get_ahk
 from ._utils import get_logger
+
+winsound: Any = None
+try:
+    import winsound
+except ImportError:
+    pass
+
 
 _action_registry: dict[str, Type['ActionBase']] = {}
 T_Action = TypeVar('T_Action', bound='ActionBase')
@@ -121,12 +128,22 @@ class WinSoundAction(ActionBase):
 
         :param sound_file_path: the path to the sound file. Must be .wav format.
         """
+        if winsound is None:
+            warnings.warn(
+                message='winsound module is not available. WinSoundAction will fail when triggered.',
+                category=RuntimeWarning,
+                stacklevel=2,
+            )
         sound_file_path = os.path.abspath(sound_file_path)
-        assert os.path.exists(sound_file_path), f'File {sound_file_path!r} does not exit'
         self.sound_file_path: str = sound_file_path
-        self._flags = winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NOSTOP
+        if winsound is None:
+            self._flags = None
+        else:
+            self._flags = winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NOSTOP
 
     def perform(self) -> None:
+        if winsound is None:
+            raise RuntimeError('winsound module is not available')
         winsound.PlaySound(self.sound_file_path, self._flags)
 
     def to_dict(self) -> dict[str, Any]:
