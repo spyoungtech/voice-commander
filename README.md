@@ -27,6 +27,16 @@ pip install ahk-binary
 
 Coming soon.
 
+
+## Usage
+
+_Profiles_ defines a group of triggers respective associated actions that are to be activated at any given time.
+
+You can define profiles in Python code.
+```python
+from
+```
+
 ## Status
 
 This project is in early stages of development. While it is very much usable in its current state and some efforts will

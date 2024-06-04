@@ -13,7 +13,7 @@ import speech_recognition as sr  # type: ignore[import-untyped]
 from speech_recognition import AudioData
 from thefuzz import process  # type: ignore[import-untyped]
 
-from voice_commander.core._utils import get_logger
+from voice_commander._utils import get_logger
 
 logger = get_logger()
 

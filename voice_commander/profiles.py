@@ -75,7 +75,7 @@ class Profile:
         if dirname is None:
             dirname = os.path.expanduser('~/.voice_commander/profiles')
         if filename is None:
-            filename = f'{self.name}.profile.json'
+            filename = f'{self.name}.vcp.json'
 
         dirname = pathlib.Path(dirname).absolute()
         filename = pathlib.Path(filename)
