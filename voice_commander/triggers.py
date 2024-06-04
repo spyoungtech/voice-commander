@@ -15,12 +15,17 @@ from typing import TypeVar
 
 from ._utils import get_ahk
 from ._utils import get_listener
+from ._utils import get_logger
 from .actions import ActionBase
 from .actions import restore_action
+from .conditions import ConditionBase
+from .conditions import restore_condition
 from .voice_listener import Listener
 
 T_Trigger = TypeVar('T_Trigger', bound='TriggerBase')
 _trigger_registry: dict[str, Type['TriggerBase']] = {}
+
+logger = get_logger()
 
 
 def restore_trigger(trigger_data: dict[str, Any]) -> 'TriggerBase':
@@ -34,6 +39,11 @@ def restore_trigger(trigger_data: dict[str, Any]) -> 'TriggerBase':
 class TriggerBase:
     def __init__(self) -> None:
         self.actions: list[ActionBase] = []
+        self.conditions: list[ConditionBase] = []
+
+    def add_condition(self, condition: ConditionBase) -> Self:
+        self.conditions.append(condition)
+        return self
 
     def add_action(self, action: ActionBase) -> Self:
         self.actions.append(action)
@@ -83,11 +93,28 @@ class TriggerBase:
         for action_data in d.get('actions', []):
             action = restore_action(action_data)
             instance.add_action(action)
+        for condition_data in d.get('conditions', []):
+            condition = restore_condition(condition_data)
+            instance.add_condition(condition)
         return instance
 
+    def check_conditions(self) -> bool:
+        return all(cond.check() for cond in self.conditions)
+
     def on_trigger(self) -> None:
-        for action in self.actions:
-            action.perform()
+        logger.debug('Checking conditions before performing actions')
+        if self.check_conditions():
+            logger.info('Conditions check passed. Performing actions')
+            for action in self.actions:
+                logger.debug('Checking action condition')
+                if action.check_conditions():
+                    logger.info('Performing action')
+                    action.perform()
+                else:
+                    logger.info('Skipping action due to unmet condition')
+            logger.info('Actions')
+        else:
+            logger.info('Trigger skipped due to unmet condition(s)')
 
 
 class HotkeyTrigger(TriggerBase):

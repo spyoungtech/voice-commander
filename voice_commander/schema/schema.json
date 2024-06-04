@@ -12,6 +12,23 @@
                 },
                 "action_config": {
                     "$ref": "#/$defs/voice_commander__actions__AHKMakeWindowActiveAction__ConfigDict"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
                 }
             },
             "required": [
@@ -33,6 +50,23 @@
                 },
                 "action_config": {
                     "$ref": "#/$defs/voice_commander__actions__AHKPressAction__ConfigDict"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
                 }
             },
             "required": [
@@ -54,6 +88,23 @@
                 },
                 "action_config": {
                     "$ref": "#/$defs/voice_commander__actions__AHKSendAction__ConfigDict"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
                 }
             },
             "required": [
@@ -61,6 +112,48 @@
                 "action_config"
             ],
             "title": "AHKSendActionSchema",
+            "type": "object"
+        },
+        "AHKWindowExistsConditionSchema": {
+            "properties": {
+                "condition_type": {
+                    "const": "voice_commander.conditions.AHKWindowExists",
+                    "enum": [
+                        "voice_commander.conditions.AHKWindowExists"
+                    ],
+                    "title": "Condition Type",
+                    "type": "string"
+                },
+                "condition_config": {
+                    "$ref": "#/$defs/voice_commander__conditions__AHKWindowExists__ConfigDict"
+                }
+            },
+            "required": [
+                "condition_type",
+                "condition_config"
+            ],
+            "title": "AHKWindowExistsConditionSchema",
+            "type": "object"
+        },
+        "AHKWindowIsActiveConditionSchema": {
+            "properties": {
+                "condition_type": {
+                    "const": "voice_commander.conditions.AHKWindowIsActive",
+                    "enum": [
+                        "voice_commander.conditions.AHKWindowIsActive"
+                    ],
+                    "title": "Condition Type",
+                    "type": "string"
+                },
+                "condition_config": {
+                    "$ref": "#/$defs/voice_commander__conditions__AHKWindowIsActive__ConfigDict"
+                }
+            },
+            "required": [
+                "condition_type",
+                "condition_config"
+            ],
+            "title": "AHKWindowIsActiveConditionSchema",
             "type": "object"
         },
         "ActionSchema": {
@@ -72,6 +165,23 @@
                 "action_config": {
                     "title": "Action Config",
                     "type": "object"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
                 }
             },
             "required": [
@@ -79,6 +189,257 @@
                 "action_config"
             ],
             "title": "ActionSchema",
+            "type": "object"
+        },
+        "AxisTriggerMode": {
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "title": "AxisTriggerMode",
+            "type": "integer"
+        },
+        "ConditionSchema": {
+            "properties": {
+                "condition_type": {
+                    "title": "Condition Type",
+                    "type": "string"
+                },
+                "condition_config": {
+                    "title": "Condition Config",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "condition_type",
+                "condition_config"
+            ],
+            "title": "ConditionSchema",
+            "type": "object"
+        },
+        "HotkeyTriggerSchema": {
+            "properties": {
+                "trigger_type": {
+                    "const": "voice_commander.triggers.HotkeyTrigger",
+                    "enum": [
+                        "voice_commander.triggers.HotkeyTrigger"
+                    ],
+                    "title": "Trigger Type",
+                    "type": "string"
+                },
+                "trigger_config": {
+                    "$ref": "#/$defs/voice_commander__triggers__HotkeyTrigger__ConfigDict"
+                },
+                "actions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/AHKSendActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKPressActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/PauseActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "trigger_type",
+                "trigger_config",
+                "actions"
+            ],
+            "title": "HotkeyTriggerSchema",
+            "type": "object"
+        },
+        "JoystickAxisTriggerSchema": {
+            "properties": {
+                "trigger_type": {
+                    "const": "voice_commander.triggers.JoystickAxisTrigger",
+                    "enum": [
+                        "voice_commander.triggers.JoystickAxisTrigger"
+                    ],
+                    "title": "Trigger Type",
+                    "type": "string"
+                },
+                "trigger_config": {
+                    "$ref": "#/$defs/voice_commander__triggers__JoystickAxisTrigger__ConfigDict"
+                },
+                "actions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/AHKSendActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKPressActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/PauseActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "trigger_type",
+                "trigger_config",
+                "actions"
+            ],
+            "title": "JoystickAxisTriggerSchema",
+            "type": "object"
+        },
+        "JoystickButtonTriggerSchema": {
+            "properties": {
+                "trigger_type": {
+                    "const": "voice_commander.triggers.JoystickButtonTrigger",
+                    "enum": [
+                        "voice_commander.triggers.JoystickButtonTrigger"
+                    ],
+                    "title": "Trigger Type",
+                    "type": "string"
+                },
+                "trigger_config": {
+                    "$ref": "#/$defs/voice_commander__triggers__JoystickButtonTrigger__ConfigDict"
+                },
+                "actions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/AHKSendActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKPressActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/PauseActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "trigger_type",
+                "trigger_config",
+                "actions"
+            ],
+            "title": "JoystickButtonTriggerSchema",
+            "type": "object"
+        },
+        "PauseActionSchema": {
+            "properties": {
+                "action_type": {
+                    "const": "voice_commander.actions.PauseAction",
+                    "enum": [
+                        "voice_commander.actions.PauseAction"
+                    ],
+                    "title": "Action Type",
+                    "type": "string"
+                },
+                "action_config": {
+                    "$ref": "#/$defs/voice_commander__actions__PauseAction__ConfigDict"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "action_type",
+                "action_config"
+            ],
+            "title": "PauseActionSchema",
             "type": "object"
         },
         "ProfileConfig": {
@@ -98,7 +459,23 @@
                 },
                 "triggers": {
                     "items": {
-                        "$ref": "#/$defs/TriggerSchema"
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/HotkeyTriggerSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/JoystickAxisTriggerSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/JoystickButtonTriggerSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/VoiceTriggerSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/TriggerSchema"
+                            }
+                        ]
                     },
                     "title": "Triggers",
                     "type": "array"
@@ -117,6 +494,10 @@
                     "title": "Trigger Type",
                     "type": "string"
                 },
+                "trigger_config": {
+                    "title": "Trigger Config",
+                    "type": "object"
+                },
                 "actions": {
                     "items": {
                         "anyOf": [
@@ -130,6 +511,9 @@
                                 "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
                             },
                             {
+                                "$ref": "#/$defs/PauseActionSchema"
+                            },
+                            {
                                 "$ref": "#/$defs/ActionSchema"
                             }
                         ]
@@ -137,17 +521,92 @@
                     "title": "Actions",
                     "type": "array"
                 },
-                "trigger_config": {
-                    "title": "Trigger Config",
-                    "type": "object"
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
                 }
             },
             "required": [
                 "trigger_type",
-                "actions",
-                "trigger_config"
+                "trigger_config",
+                "actions"
             ],
             "title": "TriggerSchema",
+            "type": "object"
+        },
+        "VoiceTriggerSchema": {
+            "properties": {
+                "trigger_type": {
+                    "const": "voice_commander.triggers.VoiceTrigger",
+                    "enum": [
+                        "voice_commander.triggers.VoiceTrigger"
+                    ],
+                    "title": "Trigger Type",
+                    "type": "string"
+                },
+                "trigger_config": {
+                    "$ref": "#/$defs/voice_commander__triggers__ConfigDict"
+                },
+                "actions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/AHKSendActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKPressActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKMakeWindowActiveActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/PauseActionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                },
+                "conditions": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/ConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowExistsConditionSchema"
+                            },
+                            {
+                                "$ref": "#/$defs/AHKWindowIsActiveConditionSchema"
+                            }
+                        ]
+                    },
+                    "title": "Conditions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "trigger_type",
+                "trigger_config",
+                "actions"
+            ],
+            "title": "VoiceTriggerSchema",
             "type": "object"
         },
         "voice_commander__actions__AHKMakeWindowActiveAction__ConfigDict": {
@@ -272,6 +731,366 @@
             },
             "required": [
                 "send_string"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__actions__PauseAction__ConfigDict": {
+            "properties": {
+                "seconds": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "title": "Seconds"
+                }
+            },
+            "required": [
+                "seconds"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__conditions__AHKWindowExists__ConfigDict": {
+            "properties": {
+                "title": {
+                    "title": "Title",
+                    "type": "string"
+                },
+                "text": {
+                    "title": "Text",
+                    "type": "string"
+                },
+                "exclude_title": {
+                    "title": "Exclude Title",
+                    "type": "string"
+                },
+                "exclude_text": {
+                    "title": "Exclude Text",
+                    "type": "string"
+                },
+                "title_match_mode": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                "RegEx",
+                                ""
+                            ]
+                        },
+                        {
+                            "enum": [
+                                "Fast",
+                                "Slow",
+                                ""
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        },
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Title Match Mode"
+                },
+                "detect_hidden_windows": {
+                    "title": "Detect Hidden Windows",
+                    "type": "boolean"
+                }
+            },
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__conditions__AHKWindowIsActive__ConfigDict": {
+            "properties": {
+                "title": {
+                    "title": "Title",
+                    "type": "string"
+                },
+                "text": {
+                    "title": "Text",
+                    "type": "string"
+                },
+                "exclude_title": {
+                    "title": "Exclude Title",
+                    "type": "string"
+                },
+                "exclude_text": {
+                    "title": "Exclude Text",
+                    "type": "string"
+                },
+                "title_match_mode": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                "RegEx",
+                                ""
+                            ]
+                        },
+                        {
+                            "enum": [
+                                "Fast",
+                                "Slow",
+                                ""
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                "Fast",
+                                                "Slow",
+                                                ""
+                                            ],
+                                            "type": "string"
+                                        },
+                                        {
+                                            "enum": [
+                                                1,
+                                                2,
+                                                3,
+                                                "RegEx",
+                                                ""
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Title Match Mode"
+                },
+                "detect_hidden_windows": {
+                    "title": "Detect Hidden Windows",
+                    "type": "boolean"
+                }
+            },
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__triggers__ConfigDict": {
+            "properties": {
+                "*trigger_phrases": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "*Trigger Phrases",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "*trigger_phrases"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__triggers__HotkeyTrigger__ConfigDict": {
+            "properties": {
+                "hotkey": {
+                    "title": "Hotkey",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hotkey"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__triggers__JoystickAxisTrigger__ConfigDict": {
+            "properties": {
+                "joystick_index": {
+                    "title": "Joystick Index",
+                    "type": "integer"
+                },
+                "axis_name": {
+                    "enum": [
+                        "X",
+                        "Y",
+                        "Z",
+                        "V",
+                        "U",
+                        "R"
+                    ],
+                    "title": "Axis Name",
+                    "type": "string"
+                },
+                "trigger_mode": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/AxisTriggerMode"
+                        },
+                        {
+                            "enum": [
+                                1,
+                                2,
+                                3
+                            ],
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "Trigger Mode"
+                },
+                "trigger_value": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "maxItems": 2,
+                            "minItems": 2,
+                            "prefixItems": [
+                                {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "number"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "number"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "array"
+                        }
+                    ],
+                    "title": "Trigger Value"
+                },
+                "polling_frequency": {
+                    "title": "Polling Frequency",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "joystick_index",
+                "axis_name",
+                "trigger_mode",
+                "trigger_value"
+            ],
+            "title": "ConfigDict",
+            "type": "object"
+        },
+        "voice_commander__triggers__JoystickButtonTrigger__ConfigDict": {
+            "properties": {
+                "joystick_index": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "Joystick Index"
+                },
+                "joystick_button": {
+                    "title": "Joystick Button",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "joystick_index",
+                "joystick_button"
             ],
             "title": "ConfigDict",
             "type": "object"
