@@ -16,6 +16,8 @@ from ahk import TitleMatchMode
 
 from ._utils import get_ahk
 from ._utils import get_logger
+from .conditions import ConditionBase
+from .conditions import restore_condition
 
 winsound: Any = None
 try:
@@ -39,6 +41,9 @@ def restore_action(action_data: dict[str, Any]) -> 'ActionBase':
 
 
 class ActionBase:
+    def __init__(self) -> None:
+        self.conditions: list[ConditionBase] = []
+
     @classmethod
     def fqn(cls) -> str:
         return f'{cls.__module__}.{cls.__qualname__}'
@@ -50,12 +55,15 @@ class ActionBase:
         _action_registry[fqn] = cls
         super().__init_subclass__(**kwargs)
 
+    def add_condition(self, condition: ConditionBase) -> Self:
+        self.conditions.append(condition)
+        return self
+
     @abc.abstractmethod
     def perform(self) -> None: ...
 
-    @abc.abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        return NotImplemented
+        return {'action_type': self.fqn(), 'conditions': [cond.to_dict() for cond in self.conditions]}
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> Self:
@@ -63,7 +71,29 @@ class ActionBase:
         action_type = d.get('action_type', None)
         assert action_type == cls.fqn(), f'action type {action_type!r} was unexpected. Was expecting {cls.fqn()!r}'
         kwargs = d.get('action_config', {})
-        return cls(**kwargs)
+        args: list[Any] | None = None
+        variadic_argname: str | None = None
+        for argname in kwargs:
+            if argname.startswith('*'):
+                if args is None:
+                    args = kwargs[argname]
+                    variadic_argname = argname
+                    assert isinstance(args, list)
+                else:
+                    raise TypeError(f'Multiple variadic properties provided: second variadic: {argname!r}')
+        if args is None:
+            args = []
+        else:
+            kwargs.pop(variadic_argname)
+
+        instance = cls(*args, **kwargs)
+        for condition_data in d.get('conditions', []):
+            condition = restore_condition(condition_data)
+            instance.add_condition(condition)
+        return instance
+
+    def check_conditions(self) -> bool:
+        return all(cond.check() for cond in self.conditions)
 
 
 class AHKSendAction(ActionBase):
@@ -79,13 +109,14 @@ class AHKSendAction(ActionBase):
         :param send_string: the keys to send - uses AutoHotkey's `Send <https://www.autohotkey.com/docs/v1/lib/Send.htm>`_ function
         """
         self.send_string: str = send_string
+        super().__init__()
 
     def perform(self) -> None:
         engine = get_ahk()
         engine.send(self.send_string)
 
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'action_config': {'send_string': self.send_string}}
+        return super().to_dict() | {'action_config': {'send_string': self.send_string}}
 
 
 class AHKPressAction(ActionBase):
@@ -103,6 +134,7 @@ class AHKPressAction(ActionBase):
         :param key: the key to press. Do not include braces for special keys.
         """
         self.key: str = key
+        super().__init__()
 
     def perform(self) -> None:
         engine = get_ahk()
@@ -112,7 +144,7 @@ class AHKPressAction(ActionBase):
         time.sleep(0.1)
 
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'action_config': {'key': self.key}}
+        return super().to_dict() | {'action_config': {'key': self.key}}
 
 
 class WinSoundAction(ActionBase):
@@ -140,6 +172,7 @@ class WinSoundAction(ActionBase):
             self._flags = None
         else:
             self._flags = winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NOSTOP
+        super().__init__()
 
     def perform(self) -> None:
         if winsound is None:
@@ -147,7 +180,7 @@ class WinSoundAction(ActionBase):
         winsound.PlaySound(self.sound_file_path, self._flags)
 
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'action_config': {'sound_file_path': self.sound_file_path}}
+        return super().to_dict() | {'action_config': {'sound_file_path': self.sound_file_path}}
 
 
 class AHKMakeWindowActiveAction(ActionBase):
@@ -169,6 +202,7 @@ class AHKMakeWindowActiveAction(ActionBase):
         :param win_get_kwargs:
         """
         self._win_get_kwargs = win_get_kwargs
+        super().__init__()
 
     def perform(self) -> None:
         engine = get_ahk()
@@ -177,7 +211,7 @@ class AHKMakeWindowActiveAction(ActionBase):
         win.activate()
 
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'action_config': self._win_get_kwargs}
+        return super().to_dict() | {'action_config': self._win_get_kwargs}
 
 
 class PauseAction(ActionBase):
@@ -194,9 +228,10 @@ class PauseAction(ActionBase):
         :param seconds: time in seconds to sleep
         """
         self.seconds: float | int = seconds
+        super().__init__()
 
     def perform(self) -> None:
         time.sleep(self.seconds)
 
     def to_dict(self) -> dict[str, Any]:
-        return {'action_type': self.fqn(), 'action_config': {'seconds': self.seconds}}
+        return super().to_dict() | {'action_config': {'seconds': self.seconds}}

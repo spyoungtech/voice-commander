@@ -15,12 +15,17 @@ from typing import TypeVar
 
 from ._utils import get_ahk
 from ._utils import get_listener
+from ._utils import get_logger
 from .actions import ActionBase
 from .actions import restore_action
+from .conditions import ConditionBase
+from .conditions import restore_condition
 from .voice_listener import Listener
 
 T_Trigger = TypeVar('T_Trigger', bound='TriggerBase')
 _trigger_registry: dict[str, Type['TriggerBase']] = {}
+
+logger = get_logger()
 
 
 def restore_trigger(trigger_data: dict[str, Any]) -> 'TriggerBase':
@@ -34,6 +39,11 @@ def restore_trigger(trigger_data: dict[str, Any]) -> 'TriggerBase':
 class TriggerBase:
     def __init__(self) -> None:
         self.actions: list[ActionBase] = []
+        self.conditions: list[ConditionBase] = []
+
+    def add_condition(self, condition: ConditionBase) -> Self:
+        self.conditions.append(condition)
+        return self
 
     def add_action(self, action: ActionBase) -> Self:
         self.actions.append(action)
@@ -50,9 +60,12 @@ class TriggerBase:
         _trigger_registry[fqn] = cls
         super().__init_subclass__(**kwargs)
 
-    @abc.abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        return NotImplemented
+        return {
+            'trigger_type': self.fqn(),
+            'actions': [action.to_dict() for action in self.actions],
+            'conditions': [cond.to_dict() for cond in self.conditions],
+        }
 
     @abc.abstractmethod
     def install_hook(self) -> None: ...
@@ -83,11 +96,28 @@ class TriggerBase:
         for action_data in d.get('actions', []):
             action = restore_action(action_data)
             instance.add_action(action)
+        for condition_data in d.get('conditions', []):
+            condition = restore_condition(condition_data)
+            instance.add_condition(condition)
         return instance
 
+    def check_conditions(self) -> bool:
+        return all(cond.check() for cond in self.conditions)
+
     def on_trigger(self) -> None:
-        for action in self.actions:
-            action.perform()
+        logger.debug('Checking conditions before performing actions')
+        if self.check_conditions():
+            logger.info('Conditions check passed. Performing actions')
+            for action in self.actions:
+                logger.debug('Checking action condition')
+                if action.check_conditions():
+                    logger.info('Performing action')
+                    action.perform()
+                else:
+                    logger.info('Skipping action due to unmet condition')
+            logger.info('Actions')
+        else:
+            logger.info('Trigger skipped due to unmet condition(s)')
 
 
 class HotkeyTrigger(TriggerBase):
@@ -99,11 +129,7 @@ class HotkeyTrigger(TriggerBase):
         self.hotkey = hotkey
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'hotkey': self.hotkey},
-            'actions': [action.to_dict() for action in self.actions],
-        }
+        return super().to_dict() | {'trigger_config': {'hotkey': self.hotkey}}
 
     def install_hook(self) -> None:
         ahk = get_ahk()
@@ -133,10 +159,8 @@ class JoystickButtonTrigger(HotkeyTrigger):
         super().__init__(hotkey=f'{joystick_index}Joy{joystick_button}')
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button},
-            'actions': [action.to_dict() for action in self.actions],
+        return super().to_dict() | {
+            'trigger_config': {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button}
         }
 
 
@@ -172,8 +196,7 @@ class JoystickAxisTrigger(TriggerBase):
     def _listen_joystick(self) -> None: ...
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
+        return super().to_dict() | {
             'trigger_config': {
                 'joystick_index': self.joystick_index,
                 'axis_name': self.axis_name,
@@ -181,7 +204,6 @@ class JoystickAxisTrigger(TriggerBase):
                 'trigger_value': self.trigger_value,
                 'polling_frequency': self.polling_frequency,
             },
-            'actions': [action.to_dict() for action in self.actions],
         }
 
     @classmethod
@@ -238,11 +260,7 @@ class VoiceTrigger(TriggerBase):
         return None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'*trigger_phrases': self.trigger_phrases},
-            'actions': [action.to_dict() for action in self.actions],
-        }
+        return super().to_dict() | {'trigger_config': {'*trigger_phrases': self.trigger_phrases}}
 
     def install_hook(self) -> None:
         assert self._thread is None

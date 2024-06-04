@@ -3,5 +3,5 @@ SpeechRecognition
 thefuzz
 pyaudio
 setuptools
-ahk
+ahk>=1.7.6
 json-five
