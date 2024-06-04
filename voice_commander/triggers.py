@@ -60,9 +60,12 @@ class TriggerBase:
         _trigger_registry[fqn] = cls
         super().__init_subclass__(**kwargs)
 
-    @abc.abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        return NotImplemented
+        return {
+            'trigger_type': self.fqn(),
+            'actions': [action.to_dict() for action in self.actions],
+            'conditions': [cond.to_dict() for cond in self.conditions],
+        }
 
     @abc.abstractmethod
     def install_hook(self) -> None: ...
@@ -126,11 +129,7 @@ class HotkeyTrigger(TriggerBase):
         self.hotkey = hotkey
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'hotkey': self.hotkey},
-            'actions': [action.to_dict() for action in self.actions],
-        }
+        return super().to_dict() | {'trigger_config': {'hotkey': self.hotkey}}
 
     def install_hook(self) -> None:
         ahk = get_ahk()
@@ -160,10 +159,8 @@ class JoystickButtonTrigger(HotkeyTrigger):
         super().__init__(hotkey=f'{joystick_index}Joy{joystick_button}')
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button},
-            'actions': [action.to_dict() for action in self.actions],
+        return super().to_dict() | {
+            'trigger_config': {'joystick_index': self.joystick_index, 'joystick_button': self.joystick_button}
         }
 
 
@@ -199,8 +196,7 @@ class JoystickAxisTrigger(TriggerBase):
     def _listen_joystick(self) -> None: ...
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
+        return super().to_dict() | {
             'trigger_config': {
                 'joystick_index': self.joystick_index,
                 'axis_name': self.axis_name,
@@ -208,7 +204,6 @@ class JoystickAxisTrigger(TriggerBase):
                 'trigger_value': self.trigger_value,
                 'polling_frequency': self.polling_frequency,
             },
-            'actions': [action.to_dict() for action in self.actions],
         }
 
     @classmethod
@@ -265,11 +260,7 @@ class VoiceTrigger(TriggerBase):
         return None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'trigger_type': self.fqn(),
-            'trigger_config': {'*trigger_phrases': self.trigger_phrases},
-            'actions': [action.to_dict() for action in self.actions],
-        }
+        return super().to_dict() | {'trigger_config': {'*trigger_phrases': self.trigger_phrases}}
 
     def install_hook(self) -> None:
         assert self._thread is None
