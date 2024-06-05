@@ -115,6 +115,13 @@ python -m voice_commander run_profile --profile-file ./myprofile.vcp.json
 
 Full documentation coming soon.
 
+## Extending voice commander
+
+voice-commander is being built with extension in mind. We don't have much to share here just yet, but you can check out
+the [voice-commander-elite](https://github.com/spyoungtech/voice-commander-elite) project, which is an extension intended
+to provide special functionality for players of the game _Elite Dangerous_. It is currently being used as a guinea pig
+for future extensions. `voice-commander-elite` may also give you ideas of the kinds of other extensions that may be possible.
+
 ## Status
 
 This project is in early stages of development, but is ready for use. Efforts will be made to keep existing
