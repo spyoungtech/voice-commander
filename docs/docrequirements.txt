@@ -7,3 +7,4 @@ thefuzz
 setuptools
 ahk
 json-five
+pyyaml

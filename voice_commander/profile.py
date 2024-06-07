@@ -24,9 +24,15 @@ def _get_default_profile_path() -> str:
     return os.path.expanduser('~/.voice_commander/profiles')
 
 
-def load_profile(filepath: str | pathlib.Path) -> 'Profile':
+def load_profile(filepath: str | pathlib.Path, filetype: typing.Literal['yaml', 'json'] | None = None) -> 'Profile':
     from .schema import ProfileSchema
 
+    if filetype == 'yaml' or (filetype is None and (str(filepath).endswith('.yml') or str(filepath).endswith('.yaml'))):
+        import yaml
+
+        with open(filepath) as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            return ProfileSchema.parse_obj(data).to_profile()
     with open(filepath) as f:
         data = json5.load(f)
     return ProfileSchema.parse_obj(data).to_profile()
@@ -38,10 +44,18 @@ def load_profile_from_name(profile_name: str) -> 'Profile':
 
     :param profile_name: the name of the profile
     """
-    filename = f'{profile_name}.vcp.json'
-    fp = os.path.join(_get_default_profile_path(), filename)
-    if not os.path.isfile(fp):
-        raise FileNotFoundError(f'Profile file {fp!r} does not exist')
+    for filename in (f'{profile_name}.vcp.json', f'{profile_name}.vcp.yaml'):
+
+        fp = os.path.join(_get_default_profile_path(), filename)
+        if not os.path.isfile(fp):
+            continue
+        else:
+            break
+    else:
+        raise FileNotFoundError(
+            f'Profile with name {profile_name!r} could not be found in {_get_default_profile_path()}'
+        )
+
     return load_profile(fp)
 
 
@@ -114,6 +128,40 @@ class Profile:
                 raise FileExistsError('File already exists but overwrite parameter is False')
         with open(fp, 'w') as outfile:
             self.dump_json(outfile)
+
+    def save_yaml(
+        self,
+        dirname: Path | str | None = None,
+        filename: Path | str | None = None,
+        create_dir: bool = True,
+        overwrite: bool = False,
+    ) -> None:
+        import yaml
+
+        if dirname is None:
+            dirname = os.path.expanduser('~/.voice_commander/profiles')
+        if filename is None:
+            filename = f'{self.name}.vcp.yaml'
+
+        dirname = pathlib.Path(dirname).absolute()
+        filename = pathlib.Path(filename)
+
+        if not dirname.exists():
+            if create_dir is True:
+                os.makedirs(dirname)
+            else:
+                raise NotADirectoryError(f'dirname {dirname} does not exist.')
+        if not dirname.is_dir():
+            raise NotADirectoryError(f'dirname {dirname} is not a directory (may be a file)')
+
+        fp = dirname / filename
+        if fp.exists():
+            if fp.is_dir():
+                raise IsADirectoryError(f'{fp} already exists and is a directory, not a file')
+            if overwrite is False:
+                raise FileExistsError('File already exists but overwrite parameter is False')
+        with open(fp, 'w') as outfile:
+            yaml.dump(self.to_dict(), outfile, sort_keys=False)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Self:

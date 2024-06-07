@@ -5,3 +5,4 @@ pyaudio
 setuptools
 ahk>=1.7.6
 json-five
+pyyaml
