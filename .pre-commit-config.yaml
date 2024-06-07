@@ -33,6 +33,7 @@ repos:
             - "-S"
             - "-l"
             - "120"
+        exclude: ^(docs/.*)
 
 -   repo: https://github.com/asottile/reorder-python-imports
     rev: v3.12.0
@@ -47,7 +48,7 @@ repos:
     -   id: mypy
         args:
             - "--strict"
-        exclude: ^(tests/.*|setup\.py|\.build\.py)
+        exclude: ^(docs/.*|tests/.*|setup\.py|\.build\.py)
         additional_dependencies:
           - pydantic
           - SpeechRecognition
@@ -64,3 +65,4 @@ repos:
           - "--ignore"
           - "E501,E704,E301,W503,E701"
         files: voice_commander\/.*
+        exclude: ^(docs/.*)
