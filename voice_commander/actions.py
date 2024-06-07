@@ -107,6 +107,8 @@ class ActionBase:
 class AHKSendAction(ActionBase):
     """
     Send inputs using AutoHotkey
+
+    Availability: Windows
     """
 
     class ConfigDict(TypedDict):
@@ -131,6 +133,8 @@ class AHKPressAction(ActionBase):
     """
     Press (and release) a single key.
     Adds small delay between key down and key up, useful for making sure games register inputs.
+
+    Availability: Windows
     """
 
     class ConfigDict(TypedDict):
@@ -158,6 +162,8 @@ class AHKPressAction(ActionBase):
 class WinSoundAction(ActionBase):
     """
     Play a sound (wav file)
+
+    Availability: Windows
     """
 
     class ConfigDict(TypedDict):
@@ -194,6 +200,8 @@ class WinSoundAction(ActionBase):
 class AHKMakeWindowActiveAction(ActionBase):
     """
     Make a window active, ensuring it has focus
+
+    Availability: Windows
     """
 
     class ConfigDict(TypedDict):
@@ -225,6 +233,8 @@ class AHKMakeWindowActiveAction(ActionBase):
 class PauseAction(ActionBase):
     """
     Sleeps for specified time
+
+    Availability: all platforms
     """
 
     class ConfigDict(TypedDict):

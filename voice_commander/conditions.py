@@ -82,6 +82,10 @@ class AHKWindowExists(ConditionBase):
         detect_hidden_windows: NotRequired[bool]
 
     def __init__(self, **win_get_kwargs: Unpack[ConfigDict]):
+        """
+
+        :param win_get_kwargs:
+        """
         self.win_get_kwargs = win_get_kwargs
 
     def check(self) -> bool:
@@ -111,6 +115,10 @@ class AHKWindowIsActive(ConditionBase):
         detect_hidden_windows: NotRequired[bool]
 
     def __init__(self, **win_get_kwargs: Unpack[ConfigDict]):
+        """
+
+        :param win_get_kwargs:
+        """
         self.win_get_kwargs = win_get_kwargs
 
     def check(self) -> bool:
