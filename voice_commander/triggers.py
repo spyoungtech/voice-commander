@@ -45,6 +45,11 @@ class TriggerBase:
         self.conditions.append(condition)
         return self
 
+    def add_actions(self, *actions: ActionBase) -> Self:
+        for action in actions:
+            self.actions.append(action)
+        return self
+
     def add_action(self, action: ActionBase) -> Self:
         self.actions.append(action)
         return self
