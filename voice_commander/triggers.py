@@ -4,6 +4,7 @@ import abc
 import enum
 import logging
 import queue
+import time
 from threading import Thread
 from typing import Any
 from typing import Literal
@@ -14,12 +15,14 @@ from typing import TypedDict
 from typing import TypeVar
 
 from ._utils import get_ahk
+from ._utils import get_joy_listener
 from ._utils import get_listener
 from ._utils import get_logger
 from .actions import ActionBase
 from .actions import restore_action
 from .conditions import ConditionBase
 from .conditions import restore_condition
+from .joy_listener import JoyListener
 from .voice_listener import Listener
 
 T_Trigger = TypeVar('T_Trigger', bound='TriggerBase')
@@ -175,34 +178,113 @@ class AxisTriggerMode(enum.IntEnum):
     VALUE_BETWEEN = 1  # Triggers when axis value is within the specified range. Resets when the value falls outside the specified range.
     VALUE_ABOVE = 2  # Triggers when the axis value is greater than the specified value. Resets when the axis value is less than the specified value.
     VALUE_BELOW = 3  # Triggers when the axis value is less than the specified value. Resets when the axis value is greater than the specified value.
+    VALUE_EQUALS = 4  # Triggers when the axis value is **exactly** the specified value
 
 
 class JoystickAxisTrigger(TriggerBase):
     class ConfigDict(TypedDict):
         joystick_index: int
         axis_name: Literal['X', 'Y', 'Z', 'V', 'U', 'R']
-        trigger_mode: AxisTriggerMode | Literal[1, 2, 3]
+        trigger_mode: AxisTriggerMode
         trigger_value: int | float | tuple[int | float, int | float]
         polling_frequency: NotRequired[int]
 
     def __init__(
         self,
-        joystick_index: int,
         axis_name: str,
         trigger_mode: AxisTriggerMode | int,
         trigger_value: int | float | tuple[int | float, int | float],
+        joystick_index: int,
         polling_frequency: int = 30,
     ):
         super().__init__()
         assert axis_name in ['X', 'Y', 'Z', 'V', 'U', 'R']
-        assert int(trigger_mode) in (1, 2, 3)
+        assert int(trigger_mode) in (1, 2, 3, 4)
+        if trigger_mode == 1:
+            trigger_mode = AxisTriggerMode.VALUE_BETWEEN
+        elif trigger_mode == 2:
+            trigger_mode = AxisTriggerMode.VALUE_ABOVE
+        elif trigger_mode == 3:
+            trigger_mode = AxisTriggerMode.VALUE_BELOW
+        elif trigger_mode == 4:
+            trigger_mode = AxisTriggerMode.VALUE_EQUALS
+        else:
+            raise ValueError(f"Invalid trigger mode: {trigger_mode!r}")
         self.joystick_index = joystick_index
-        self.axis_name = axis_name
-        self.trigger_mode = trigger_mode
+        self.axis_name: str = axis_name
+        self.trigger_mode: AxisTriggerMode = trigger_mode
         self.trigger_value = trigger_value
         self.polling_frequency = polling_frequency
+        self._joy_listener: JoyListener = get_joy_listener()
+        self._listener_thread: Thread | None = None
+        self._running: bool = False
+        self._awaiting_reset: bool = True
 
-    def _listen_joystick(self) -> None: ...
+    def _evaluate_trigger(self, current_value: int | float, last_value: int | float) -> None:
+        if self.trigger_mode == AxisTriggerMode.VALUE_BELOW:
+            assert isinstance(self.trigger_value, (int, float))
+            if current_value > self.trigger_value:
+                if self._awaiting_reset:
+                    self._awaiting_reset = False
+            elif current_value < self.trigger_value:
+                if not self._awaiting_reset:
+                    self._awaiting_reset = True
+                    self.on_trigger()
+
+        elif self.trigger_mode == AxisTriggerMode.VALUE_ABOVE:
+            assert isinstance(self.trigger_value, (int, float))
+
+            if current_value < self.trigger_value:
+                if self._awaiting_reset:
+                    self._awaiting_reset = False
+            elif current_value > self.trigger_value:
+                if not self._awaiting_reset:
+                    self._awaiting_reset = True
+                    self.on_trigger()
+        elif self.trigger_mode == AxisTriggerMode.VALUE_BETWEEN:
+            assert isinstance(self.trigger_value, tuple)
+            lower_bound, upper_bound = self.trigger_value
+            if lower_bound < current_value < upper_bound:
+                if not self._awaiting_reset:
+                    self._awaiting_reset = True
+                    self.on_trigger()
+            else:
+                if self._awaiting_reset:
+                    self._awaiting_reset = False
+
+        elif self.trigger_mode == AxisTriggerMode.VALUE_EQUALS:
+            assert isinstance(self.trigger_value, (int, float))
+            if current_value == self.trigger_value:
+                if not self._awaiting_reset:
+                    self._awaiting_reset = True
+                    self.on_trigger()
+            else:
+                if self._awaiting_reset:
+                    self._awaiting_reset = False
+
+    def _listen_joystick(self) -> None:
+        last_value = None
+        start_attempts = 0
+        while True:
+            try:
+                self._joy_listener.get_joystick_axis_value(axis=self.axis_name, joystick_index=self.joystick_index)
+                break
+            except Exception:
+                if start_attempts >= 5:
+                    raise
+                start_attempts += 1
+                time.sleep(0.2)
+
+        while True:
+            if not self._running:
+                break
+            time.sleep(1 / self.polling_frequency)
+            current_value = self._joy_listener.get_joystick_axis_value(
+                axis=self.axis_name, joystick_index=self.joystick_index
+            )
+            if last_value is None:
+                last_value = current_value
+            self._evaluate_trigger(current_value, last_value)
 
     def _get_config(self) -> ConfigDict:
         return {
@@ -220,14 +302,18 @@ class JoystickAxisTrigger(TriggerBase):
         kwargs = d.get('properties', {})
         trigger_mode_int = kwargs.pop('trigger_mode', None)
         match trigger_mode_int:
+            case AxisTriggerMode():
+                kwargs['trigger_value'] = trigger_mode_int
             case 1:
                 kwargs['trigger_mode'] = AxisTriggerMode.VALUE_BETWEEN
             case 2:
                 kwargs['trigger_mode'] = AxisTriggerMode.VALUE_ABOVE
             case 3:
                 kwargs['trigger_mode'] = AxisTriggerMode.VALUE_BELOW
+            case 4:
+                kwargs['trigger_mode'] = AxisTriggerMode.VALUE_EQUALS
             case _:
-                raise ValueError(f'invalid trigger mode: {trigger_mode_int}')
+                raise ValueError(f'invalid trigger mode: {trigger_mode_int!r}')
         instance = cls(**kwargs)
         for action_data in d.get('actions', []):
             action = ActionBase.from_dict(action_data)
@@ -235,10 +321,20 @@ class JoystickAxisTrigger(TriggerBase):
         return instance
 
     def install_hook(self) -> None:
-        raise NotImplementedError()
+        assert self._listener_thread is None
+        assert self._running is False
+        self._running = True
+        self._joy_listener.start()
+        self._listener_thread = Thread(target=self._listen_joystick)
+        self._listener_thread.start()
 
     def uninstall_hook(self) -> None:
-        raise NotImplementedError()
+        assert self._running is True
+        assert self._listener_thread is not None
+        self._running = False
+        self._listener_thread.join()
+        self._listener_thread = None
+        self._joy_listener.stop()  # XXX: hmm...
 
 
 class VoiceTrigger(TriggerBase):

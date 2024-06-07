@@ -195,7 +195,8 @@
             "enum": [
                 1,
                 2,
-                3
+                3,
+                4
             ],
             "title": "AxisTriggerMode",
             "type": "integer"
@@ -1003,20 +1004,7 @@
                     "type": "string"
                 },
                 "trigger_mode": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/AxisTriggerMode"
-                        },
-                        {
-                            "enum": [
-                                1,
-                                2,
-                                3
-                            ],
-                            "type": "integer"
-                        }
-                    ],
-                    "title": "Trigger Mode"
+                    "$ref": "#/$defs/AxisTriggerMode"
                 },
                 "trigger_value": {
                     "anyOf": [
