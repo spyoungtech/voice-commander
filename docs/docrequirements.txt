@@ -1,0 +1,9 @@
+sphinx
+sphinx-rtd-theme
+sphinx-autodoc-typehints
+pydantic
+SpeechRecognition
+thefuzz
+setuptools
+ahk
+json-five
