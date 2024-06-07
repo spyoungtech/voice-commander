@@ -12,6 +12,7 @@ from ahk.directives import NoTrayIcon
 
 _global_ahk: Union[None, AHK[Any]] = None
 _global_listener: Union[None, Listener] = None
+_global_joy_listener: Union[None, JoyListener] = None
 
 
 def get_logger() -> logging.Logger:
@@ -32,6 +33,13 @@ def get_listener() -> Listener:
     if _global_listener is None:
         _global_listener = Listener()
     return _global_listener
+
+
+def get_joy_listener() -> JoyListener:
+    global _global_joy_listener
+    if _global_joy_listener is None:
+        _global_joy_listener = JoyListener()
+    return _global_joy_listener
 
 
 def get_joystick_button() -> tuple[str, str]:
@@ -118,3 +126,4 @@ def get_joystick_axis_or_pov() -> tuple[str, str, int | float]:
 
 
 from .voice_listener import Listener  # noqa
+from .joy_listener import JoyListener  # noqa
