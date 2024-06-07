@@ -133,10 +133,19 @@ class TriggerBase:
 
 
 class HotkeyTrigger(TriggerBase):
+    """
+    Uses AutoHotkey hotkeys to trigger actions.
+
+    Availability: Windows
+    """
+
     class ConfigDict(TypedDict):
         hotkey: str
 
     def __init__(self, hotkey: str):
+        """
+        :param hotkey: the trigger hotkey -- same syntax as `AutoHotkey hotkeys <https://www.autohotkey.com/docs/v1/Hotkeys.htm>`_
+        """
         super().__init__()
         self.hotkey = hotkey
 
@@ -161,11 +170,22 @@ class HotkeyTrigger(TriggerBase):
 
 
 class JoystickButtonTrigger(HotkeyTrigger):
+    """
+    Like :py:class:`voice_commander.triggers.HotkeyTrigger` but with a convenient constructor for defining joystick button hotkeys.
+
+    Availability: Windows
+    """
+
     class ConfigDict(TypedDict):
         joystick_index: int | str
         joystick_button: str
 
     def __init__(self, joystick_index: int | str, joystick_button: str):
+        """
+
+        :param joystick_index: the index of the joystick device (per AutoHotkey indices)
+        :param joystick_button: the button number (between 1 and 32)
+        """
         self.joystick_index = joystick_index
         self.joystick_button = joystick_button
         super().__init__(hotkey=f'{joystick_index}Joy{joystick_button}')
@@ -175,6 +195,10 @@ class JoystickButtonTrigger(HotkeyTrigger):
 
 
 class AxisTriggerMode(enum.IntEnum):
+    """
+    Available trigger modes for joystick axis trigger.
+    """
+
     VALUE_BETWEEN = 1  # Triggers when axis value is within the specified range. Resets when the value falls outside the specified range.
     VALUE_ABOVE = 2  # Triggers when the axis value is greater than the specified value. Resets when the axis value is less than the specified value.
     VALUE_BELOW = 3  # Triggers when the axis value is less than the specified value. Resets when the axis value is greater than the specified value.
@@ -182,6 +206,12 @@ class AxisTriggerMode(enum.IntEnum):
 
 
 class JoystickAxisTrigger(TriggerBase):
+    """
+    Uses AutoHotkey to monitor joystick axis values and trigger according to specified parameters
+
+    Availability: Windows
+    """
+
     class ConfigDict(TypedDict):
         joystick_index: int
         axis_name: Literal['X', 'Y', 'Z', 'V', 'U', 'R']
@@ -197,6 +227,14 @@ class JoystickAxisTrigger(TriggerBase):
         joystick_index: int,
         polling_frequency: int = 30,
     ):
+        """
+
+        :param axis_name: The name of the axis to monitor: X, Y, Z, R, U, V, or POV
+        :param trigger_mode: one of :py:class:`~voice_commander.triggers.AxisTriggerMode` - controls the logic of trigger gates
+        :param trigger_value: the axis value trigger threshold(s). When using ``VALUE_BETWEEN`` mode, use a tuple to specify the lower and upper threshold bounds.
+        :param joystick_index: the index of the joystick to monitor
+        :param polling_frequency: how frequently to check axis value (the higher this value is, the lower the delay between checks)
+        """
         super().__init__()
         assert axis_name in ['X', 'Y', 'Z', 'V', 'U', 'R']
         assert int(trigger_mode) in (1, 2, 3, 4)

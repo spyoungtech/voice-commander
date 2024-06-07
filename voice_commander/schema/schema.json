@@ -192,6 +192,7 @@
             "type": "object"
         },
         "AxisTriggerMode": {
+            "description": "Available trigger modes for joystick axis trigger.",
             "enum": [
                 1,
                 2,
