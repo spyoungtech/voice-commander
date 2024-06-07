@@ -24,7 +24,6 @@ class JoyListener:
         self._joystick_values: dict[str, dict[str, int | float]] = {}
         self._stopped = True
         self._axis_listener: Thread | None = None
-        # self._subscriber_queues: dict[tuple[str, str], queue.Queue[tuple[str, str]]] = {}
         self._polling_frequency = polling_frequency
         self._lock = Lock()
 
@@ -52,29 +51,6 @@ class JoyListener:
                 assert self._axis_listener is not None
                 self._axis_listener.join()
                 self._axis_listener = None
-
-    # def add_button_subscription(self, joystick_button_index: int | str, joystick_index: int | Literal[''] = '') -> queue.Queue[tuple[str, str]]:
-    #     ahkname = f'{joystick_index}Joy{joystick_button_index}'
-    #     key = (str(joystick_index), str(joystick_button_index))
-    #     if key in self._subscriber_queues:
-    #         raise ValueError(f'{ahkname} already registered for an active callback.')
-    #     new_queue: queue.Queue[tuple[str, str]] = queue.Queue()
-    #     self._subscriber_queues[key] = new_queue
-    #     self.ahk.add_hotkey(ahkname, callback=self._make_button_pressed_callback(new_queue, key))
-    #     return new_queue
-    #
-    # def remove_button_subscription(self, joystick_button_index: int | str, joystick_index: int | Literal[''] = '') -> None:
-    #     key = (str(joystick_index), str(joystick_button_index))
-    #     if key in self._subscriber_queues:
-    #         del self._subscriber_queues[key]
-    #     else:
-    #         ahkname = f'{joystick_index}Joy{joystick_button_index}'
-    #         raise ValueError(f'{ahkname} is not subscribed')
-    #
-    # def _make_button_pressed_callback(self, queue: queue.Queue[tuple[str, str]], key: tuple[str, str]) -> Callable[..., None]:
-    #     def callback() -> None:
-    #         queue.put(key)
-    #     return callback
 
     def _listen(self) -> None:
         _get_all_joystick_values(self.ahk)
