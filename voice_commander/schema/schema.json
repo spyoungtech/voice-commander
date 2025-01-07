@@ -4,9 +4,6 @@
             "properties": {
                 "action_type": {
                     "const": "voice_commander.actions.AHKMakeWindowActiveAction",
-                    "enum": [
-                        "voice_commander.actions.AHKMakeWindowActiveAction"
-                    ],
                     "title": "Action Type",
                     "type": "string"
                 },
@@ -42,9 +39,6 @@
             "properties": {
                 "action_type": {
                     "const": "voice_commander.actions.AHKPressAction",
-                    "enum": [
-                        "voice_commander.actions.AHKPressAction"
-                    ],
                     "title": "Action Type",
                     "type": "string"
                 },
@@ -80,9 +74,6 @@
             "properties": {
                 "action_type": {
                     "const": "voice_commander.actions.AHKSendAction",
-                    "enum": [
-                        "voice_commander.actions.AHKSendAction"
-                    ],
                     "title": "Action Type",
                     "type": "string"
                 },
@@ -118,9 +109,6 @@
             "properties": {
                 "condition_type": {
                     "const": "voice_commander.conditions.AHKWindowExists",
-                    "enum": [
-                        "voice_commander.conditions.AHKWindowExists"
-                    ],
                     "title": "Condition Type",
                     "type": "string"
                 },
@@ -139,9 +127,6 @@
             "properties": {
                 "condition_type": {
                     "const": "voice_commander.conditions.AHKWindowIsActive",
-                    "enum": [
-                        "voice_commander.conditions.AHKWindowIsActive"
-                    ],
                     "title": "Condition Type",
                     "type": "string"
                 },
@@ -224,9 +209,6 @@
             "properties": {
                 "trigger_type": {
                     "const": "voice_commander.triggers.HotkeyTrigger",
-                    "enum": [
-                        "voice_commander.triggers.HotkeyTrigger"
-                    ],
                     "title": "Trigger Type",
                     "type": "string"
                 },
@@ -286,9 +268,6 @@
             "properties": {
                 "trigger_type": {
                     "const": "voice_commander.triggers.JoystickAxisTrigger",
-                    "enum": [
-                        "voice_commander.triggers.JoystickAxisTrigger"
-                    ],
                     "title": "Trigger Type",
                     "type": "string"
                 },
@@ -348,9 +327,6 @@
             "properties": {
                 "trigger_type": {
                     "const": "voice_commander.triggers.JoystickButtonTrigger",
-                    "enum": [
-                        "voice_commander.triggers.JoystickButtonTrigger"
-                    ],
                     "title": "Trigger Type",
                     "type": "string"
                 },
@@ -410,9 +386,6 @@
             "properties": {
                 "action_type": {
                     "const": "voice_commander.actions.PauseAction",
-                    "enum": [
-                        "voice_commander.actions.PauseAction"
-                    ],
                     "title": "Action Type",
                     "type": "string"
                 },
@@ -449,9 +422,6 @@
                 "schema_version": {
                     "const": "0",
                     "default": "0",
-                    "enum": [
-                        "0"
-                    ],
                     "title": "Schema Version",
                     "type": "string"
                 },
@@ -553,9 +523,6 @@
             "properties": {
                 "trigger_type": {
                     "const": "voice_commander.triggers.VoiceTrigger",
-                    "enum": [
-                        "voice_commander.triggers.VoiceTrigger"
-                    ],
                     "title": "Trigger Type",
                     "type": "string"
                 },
