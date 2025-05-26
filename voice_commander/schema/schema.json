@@ -148,6 +148,7 @@
                     "type": "string"
                 },
                 "action_config": {
+                    "additionalProperties": true,
                     "title": "Action Config",
                     "type": "object"
                 },
@@ -194,6 +195,7 @@
                     "type": "string"
                 },
                 "condition_config": {
+                    "additionalProperties": true,
                     "title": "Condition Config",
                     "type": "object"
                 }
@@ -467,6 +469,7 @@
                     "type": "string"
                 },
                 "trigger_config": {
+                    "additionalProperties": true,
                     "title": "Trigger Config",
                     "type": "object"
                 },
