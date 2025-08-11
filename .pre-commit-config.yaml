@@ -17,7 +17,7 @@ repos:
           - json-five
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     -   id: mixed-line-ending
         args: ["-f", "lf"]
@@ -43,7 +43,7 @@ repos:
         exclude: setup\.py
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.15.0'
+    rev: 'v1.17.1'
     hooks:
     -   id: mypy
         args:
@@ -60,7 +60,7 @@ repos:
           - types-PyYAML
 
 -   repo: https://github.com/pycqa/flake8
-    rev: '7.2.0'
+    rev: '7.3.0'
     hooks:
     -   id: flake8
         args:
