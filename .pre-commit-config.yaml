@@ -25,8 +25,8 @@ repos:
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
     -   id: double-quote-string-fixer
--   repo: https://github.com/psf/black
-    rev: '25.1.0'
+-   repo: https://github.com/psf/black-pre-commit-mirror
+    rev: '25.9.0'
     hooks:
     -   id: black
         args:
@@ -43,7 +43,7 @@ repos:
         exclude: setup\.py
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.18.1'
+    rev: 'v1.18.2'
     hooks:
     -   id: mypy
         args:
