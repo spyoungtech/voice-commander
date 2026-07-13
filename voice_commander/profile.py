@@ -16,7 +16,6 @@ from ._utils import get_listener
 from ._utils import get_logger
 from .triggers import TriggerBase
 
-
 logger = get_logger()
 
 
