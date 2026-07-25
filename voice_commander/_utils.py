@@ -9,7 +9,6 @@ from typing import Union
 from ahk import AHK
 from ahk.directives import NoTrayIcon
 
-
 _global_ahk: Union[None, AHK[Any]] = None
 _global_listener: Union[None, Listener] = None
 _global_joy_listener: Union[None, JoyListener] = None
